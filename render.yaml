@@ -1,0 +1,59 @@
+# Render Blueprint: creates the backend and ML service on free plans.
+services:
+  - type: web
+    name: smart-library-ml
+    runtime: python
+    plan: free
+    rootDir: ml-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.14.7
+      - key: SERVICE_KEY
+        generateValue: true
+
+  - type: web
+    name: smart-library-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci --omit=dev
+    startCommand: node server.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 24
+      - key: TZ
+        value: Asia/Kolkata
+      - key: DB_TIMEZONE
+        value: "+05:30"
+      - key: DB_NAME
+        value: smart_library
+      - key: DB_SSL
+        value: "true"
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_SSL_CA
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: ML_SERVICE_URL
+        sync: false
+      - key: ML_SERVICE_KEY
+        fromService:
+          type: web
+          name: smart-library-ml
+          envVarKey: SERVICE_KEY
+      # A sleeping free ML service can take about a minute to wake.
+      - key: ML_TIMEOUT_MS
+        value: 70000
+      - key: JWT_SECRET
+        generateValue: true

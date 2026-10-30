@@ -16,6 +16,8 @@ module.exports = {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD || '',
     timezone: process.env.DB_TIMEZONE || '+05:30',
+    ssl: process.env.DB_SSL === 'true',
+    sslCa: process.env.DB_SSL_CA || '',
   },
   jwt: { secret: process.env.JWT_SECRET, expiresIn: process.env.JWT_EXPIRES_IN || '8h' },
   ml: {

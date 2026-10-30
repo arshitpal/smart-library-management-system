@@ -8,7 +8,12 @@ const sequelize = new Sequelize(db.name, db.user, db.password, {
   dialect: 'mysql',
   timezone: db.timezone,
   logging: false,
-  dialectOptions: { decimalNumbers: true, charset: 'utf8mb4_unicode_ci' },
+  dialectOptions: {
+    decimalNumbers: true,
+    charset: 'utf8mb4_unicode_ci',
+    // Hosted MySQL needs TLS; the CA certificate proves it is the right server.
+    ...(db.ssl && { ssl: { ca: db.sslCa, rejectUnauthorized: true } }),
+  },
   pool: { max: 10, min: 0, idle: 10000 },
   define: { timestamps: false, freezeTableName: true, underscored: true },
 });

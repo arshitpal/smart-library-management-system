@@ -67,6 +67,18 @@ Then restart the ML service.
 cd backend; npm test
 ```
 
+## Free deployment
+
+Uses Aiven (MySQL), Render (backend and ML service) and Vercel (frontend).
+
+1. **Aiven:** create a free MySQL service. Download its CA certificate as `ca.pem`, then run **deploy-db.bat** and enter the host, port, user, password and `ca.pem` path. Save the new login passwords it prints, because they are shown only once.
+2. **Render:** choose New > Blueprint and select this repository. It reads `render.yaml`. Enter the Aiven values, and paste the contents of `ca.pem` into `DB_SSL_CA`. Set `CLIENT_ORIGIN` to `https://placeholder.vercel.app` for now.
+3. **Render:** copy the ML service's URL into the backend's `ML_SERVICE_URL`.
+4. **Vercel:** import this repository, set Root Directory to `frontend`, and add `VITE_API_URL` with the backend's Render URL, without a trailing slash.
+5. **Render:** change `CLIENT_ORIGIN` to the Vercel URL, without a trailing slash.
+
+Free Render services sleep after 15 minutes without traffic and take about a minute to wake, so open the site before a demo.
+
 ## Smart App Control
 
 Windows Smart App Control is on for this PC, and it blocks some new Python package builds. `ml-service/requirements.txt` pins versions it allows. Do not upgrade pandas, pydantic or scikit-learn without testing that they still load.

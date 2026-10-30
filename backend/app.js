@@ -7,6 +7,9 @@ const routes = require('./routes');
 
 const app = express();
 
+// Hosting platforms sit in front of the app, so the login rate limit needs the real client IP.
+app.set('trust proxy', 1);
+
 app.use(helmet());
 app.use(cors({ origin: clientOrigin, exposedHeaders: ['Content-Disposition'] }));
 app.use(express.json({ limit: '100kb' }));

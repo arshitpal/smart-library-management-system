@@ -6,7 +6,8 @@ export const getToken = () => localStorage.getItem(TOKEN_KEY);
 export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
 export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
-const api = axios.create({ baseURL: '/api' });
+// Locally Vite proxies /api. In production VITE_API_URL is the backend's address.
+const api = axios.create({ baseURL: `${import.meta.env.VITE_API_URL || ''}/api` });
 
 api.interceptors.request.use((config) => {
   const token = getToken();
